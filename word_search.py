@@ -1,9 +1,21 @@
 # A solution to word search problem using recursive backtracking.
 
-board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]]
-# word = "ABCCED"
+import psycopg
+
+# Get a database connection and a cursor.
+conn = psycopg.connect(host="localhost", dbname="postgres", user="postgres", password="1234", port=5432)
+cur = conn.cursor()
+# Get the board matrix from the database.
+cur.execute('''SELECT board FROM boards WHERE id=0;''')
+board = cur.fetchone()[0]
+# Close the cursor and connection.
+cur.close()
+conn.close()
+
+# board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]]
+word = "ABCCED"
 # word = "SEE"
-word = "ABCB"
+# word = "ABCB"
 
 
 def exist(board, word):

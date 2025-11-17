@@ -13,9 +13,9 @@ cur.close()
 conn.close()
 
 # board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]]
-word = "ABCCED"
+# word = "ABCCED"
 # word = "SEE"
-# word = "ABCB"
+word = "ABCB"
 
 
 def exist(board, word):

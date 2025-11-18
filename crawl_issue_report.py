@@ -1,5 +1,5 @@
-
 import requests
+import psycopg
 from datetime import datetime
 
 # Jira rest API address.
@@ -59,33 +59,21 @@ if response.status_code == 200:
         # Append one comment to the list.
         all_comments_list_to_save.append(one_formatted_comment_to_save)
 
-    print("Details part starts here: ")
-    print("Type: ", Type)
-    print("Priority: ", Priority)
-    print("Component/s: ", Components)
-    print("Status: ", Status)
-    print("Resolution: ", Resolution)
 
-    print("People part starts here: ")
-    print("Assignee:", Assignee)
-    print("Reporter: ", Reporter)
-    print("Votes: ", Votes, type(Votes))
-    print("Watchers: ", Watchers, type(Watchers))
-
-    print("Dates part starts here!")
-    print("Created: ", Created, type(Created))
-    print("Updated: ", Updated, type(Updated))
-    print("Resolved: ", Resolved, type(Resolved))
-
-    print("Description part starts here!")
-    print("Description: ", Description)
-    print("Description type: ", type(Description))
-
-    print("Comments part starts here!")
-    print("Comments: ", all_comments_list_to_save, type(all_comments_list_to_save))
+    # Since all data is ready, we get a database connection and a cursor.
+    conn = psycopg.connect(host="localhost", dbname="postgres", user="postgres", password="1234", port=5432)
+    cur = conn.cursor()
     
-    # print("*******************************************************")
-    # print(json.dumps(issue_data, indent=2))
+    # Insert this issue report into the created table.
+    insert_query = '''
+    INSERT INTO issue_reports (Type, Priority, Components, Status, Resolution, Assignee, Reporter, Votes, Watchers, Created, Updated, Resolved, Description, Comments
+    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+    '''
+    cur.execute(insert_query, (Type, Priority, Components, Status, Resolution, Assignee, Reporter, Votes, Watchers, Created, Updated, Resolved, Description, all_comments_list_to_save))
+    
+    conn.commit()
+    cur.close()
+    conn.close()
 else:
     # If there are some problems, print the returned status code.
     print("Error: ", response.status_code)
